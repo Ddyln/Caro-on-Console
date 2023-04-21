@@ -9,11 +9,15 @@ int _COMMAND; // Biến nhận giá trị phím người dùng nhập
 int _X, _Y, cX, cY; //Tọa độ hiện hành trên màn hình bàn cờ
 int cntX, cntO, saveTurn = 0, cntWinO = 0, cntLoseO = 0, cntDraw = 0, cntRound = 1;
 float remain;
-bool sound[] = { 1, 1, 1 };
+bool sound[] = { 1, 1 };
 string NamePlayer_O = "", NamePlayer_X = "";
 WinningPos WP[5];
 
 int main() {
+	//SetConsoleBlank();
+	//DrawBox(4, 2, 5, 5, RED, 0);
+	//GotoXY(10, 10);
+	//return 0;
 	HideCursor(1);
 	FixConsoleWindow();
 	changeFont(21);

@@ -3,7 +3,6 @@
 
 #define BGM 0
 #define CLICK_SFX 1
-#define WIN_SFX 2
 #define SOUND_PATH string("save\\sound.txt")
 
 // Included libraries

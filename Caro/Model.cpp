@@ -303,6 +303,89 @@ bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound
 				ClearBox(34, 15, 79, 4);
 				HoverButton(button[cur]);
 			}
+			else {
+				UnhoverButton(button[cur], BLACK);
+				GotoXY(83, 5); cout << "MUSIC";
+				GotoXY(83, 12); cout << "CLICK_SFX";
+				TextColor(BLACK);
+				GotoXY(86, 7); cout << "TURN ON";
+				DrawBoard(1, 1, 98, 6, BLACK);
+				GotoXY(86, 10); cout << "TURN OFF";
+				DrawBoard(1, 1, 98, 9, BLACK);
+				
+				GotoXY(86, 14); cout << "TURN ON";
+				DrawBoard(1, 1, 98, 13, BLACK);
+				GotoXY(86, 17); cout << "TURN OFF";
+				DrawBoard(1, 1, 98, 16, BLACK);
+				int n = 4, i = 0;
+				_POINT a[4];
+				a[0] = { 99, 7, 0 };
+				a[1] = { 99, 10, 0 };
+				a[2] = { 99, 14, 0 };
+				a[3] = { 99, 17, 0 };
+				GotoXY(a[i].x, a[i].y); cout << L_TRIANGLE;
+				GotoXY(a[i].x + 2, a[i].y); cout << R_TRIANGLE;
+				if (sound[BGM])
+					GotoXY(a[0].x + 1, a[0].y), cout << "X";
+				else
+					GotoXY(a[1].x, a[1].y), cout << " X ";
+				if (sound[CLICK_SFX])
+					GotoXY(a[2].x, a[2].y), cout << " X ";
+				else
+					GotoXY(a[3].x, a[3].y), cout << " X ";
+				while (true) {
+					char c = toupper(_getch());
+					if (c == ESC) {
+						if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+						break;
+					}
+					int newI = i;
+					if (c == ENTER) {
+						if (i == 0) {
+							GotoXY(a[0].x + 1, a[0].y);
+							cout << "X";
+							GotoXY(a[1].x + 1, a[1].y);
+							cout << " ";
+							SetSound(sound, BGM, 1);
+						}
+						else if (i == 1) {
+							GotoXY(a[1].x + 1, a[1].y);
+							cout << "X";
+							GotoXY(a[0].x + 1, a[0].y);
+							cout << " ";
+							SetSound(sound, BGM, 0);
+						}
+						else if (i == 2) {
+							GotoXY(a[2].x + 1, a[2].y);
+							cout << "X";
+							GotoXY(a[3].x + 1, a[3].y);
+							cout << " ";
+							SetSound(sound, CLICK_SFX, 1);
+						}
+						else {
+							GotoXY(a[3].x + 1, a[3].y);
+							cout << "X";
+							GotoXY(a[2].x + 1, a[2].y);
+							cout << " ";
+							SetSound(sound, CLICK_SFX, 0);
+						}
+						if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+						continue;
+					}
+					else if (c == W)
+						newI = (--newI + n) % n;
+					else if (c == S)
+						newI = ++newI % n;
+					GotoXY(a[i].x, a[i].y); cout << ' ';
+					GotoXY(a[i].x + 2, a[i].y); cout << ' ';
+					i = newI;
+					GotoXY(a[i].x, a[i].y); cout << L_TRIANGLE;
+					GotoXY(a[i].x + 2, a[i].y); cout << R_TRIANGLE;
+					if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+				}
+				ClearBox(34, 15, 79, 4);
+				HoverButton(button[cur]);
+			}
 		}
 	}
 	TextColor(BLACK);
@@ -317,14 +400,14 @@ void StartGame(_POINT _A[B_SIZE][B_SIZE], bool reset, bool& _TURN, int& _COMMAND
 	bool validEnter = true;
 	float lastPressed = clock();
 	while (true) {
-		DrawTimer((lastPressed + remain - clock()) / 1000.0, _TURN);
-		if (((lastPressed + remain - clock()) / 1000.0) < 0) {
+		if (((lastPressed + remain - clock()) / 1000) < 0) {
 			ShowTurn(_X, _Y, _TURN, 1);
 			_TURN = !_TURN;
 			DrawTimerBox(_TURN);
 			remain = 15e3;
 			lastPressed = clock();
 		}
+		DrawTimer((lastPressed + remain - clock()) / 1000.0, _TURN);
 		if (_kbhit()) {
 			_COMMAND = toupper(_getch());
 			if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
@@ -444,7 +527,7 @@ void LoadSound(bool sound[]) {
 		cout << "Can't open file";
 		return;
 	}
-	int n = 3;
+	int n = 2;
 	for (int i = 0; i < n; i++)
 		inp >> sound[i];
 	if (sound[BGM])
@@ -462,7 +545,7 @@ void SetSound(bool sound[], int type, bool value) {
 		return;
 	}
 	sound[type] = value;
-	int n = 3;
+	int n = 2;
 	for (int i = 0; i < n; i++)
 		out << sound[i] << ' ';
 	LoadSound(sound);
@@ -476,8 +559,6 @@ void PlayAudio(int type) {
 	else if (type == CLICK_SFX)
 		//mciSendString(L"play assets/sounds/click_sfx.wav", NULL, 0, NULL);
 		PlaySound(TEXT("assets/sounds/click_sfx.wav"), NULL, SND_ASYNC);
-	else if (type == WIN_SFX)
-		mciSendString(L"play assets/sounds/win_sfx.wav", NULL, 0, NULL);
 }
 
 void StopSound(int type) {
@@ -501,5 +582,6 @@ string CleanFileName(string s) {
 void ExitGame() {
 	StopSound(BGM);
 	SetConsoleBlank();
+	ExitScreen();
 	exit(0);
 }
