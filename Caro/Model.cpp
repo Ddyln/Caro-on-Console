@@ -146,7 +146,7 @@ bool CheckWinLose(_POINT _A[B_SIZE][B_SIZE], int& saveTurn, int cX, int cY, Winn
 bool CheckFullBoard(_POINT _A[B_SIZE][B_SIZE]) {
 	for (int i = 0; i < B_SIZE; i++) {
 		for (int j = 0; j < B_SIZE; j++) {
-			if (_A[i][j].c != 0)
+			if (_A[i][j].c == 0)
 				return false;
 		}
 	}

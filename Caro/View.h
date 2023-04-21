@@ -9,8 +9,6 @@ int GetCurrentColor();
 void DrawBox(int w, int h, int x, int y, int color, int Time);
 void PrintCARO(int x, int y, int color);
 void PrintNote(int x, int y, int color);
-void DrawHeart(int x, int y, int color);
-void DrawDiamond(int x, int y, int color);
 void DrawPattern_Col(int x, int y, int color, int pt, int kc);
 void BackGround();
 void DrawBoxMini(int w, int h, int x, int y, int color);

@@ -152,28 +152,6 @@ void DrawPattern_Col(int x, int y, int color, int pt, int kc)
 	}
 }
 
-void DrawHeart(int x, int y, int color)
-{
-	TextColor(color);
-	unsigned char pattern = 3;
-	for (int i = 0; i < 30; i = i + 6)
-	{
-		GotoXY(y, x + i);
-		putchar(pattern);
-	}
-}
-
-void DrawDiamond(int x, int y, int color)
-{
-	TextColor(color);
-	unsigned char pattern = 4;
-	for (int i = 0; i < 30; i = i + 6)
-	{
-		GotoXY(y, x + i);
-		putchar(pattern);
-	}
-}
-
 void BackGround()
 {
 	DrawPattern_Col(1, 6, LIGHT_RED, 3, 6);
