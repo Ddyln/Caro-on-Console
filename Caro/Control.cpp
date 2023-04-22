@@ -7,28 +7,6 @@ void StopSound() {
 	PlaySound(NULL, 0, SND_PURGE);
 }
 
-int inputKey()
-{
-	if (_kbhit())
-	{
-		int key = _getch();
-
-		if (key == 224) // special key
-		{
-			key = _getch();
-			return key + 1000;
-		}
-
-		return key;
-	}
-	else
-	{
-		return key_none;
-	}
-
-	return key_none;
-}
-
 void GotoXY(int column, int line)
 {
 	COORD coord;

@@ -834,7 +834,6 @@ void MainScreen() {
 
 void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5])
 {
-	LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 	Sleep(50);
 	SetConsoleBlank();
 	BackGround();

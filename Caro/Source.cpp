@@ -14,14 +14,11 @@ string NamePlayer_O = "", NamePlayer_X = "";
 WinningPos WP[5];
 
 int main() {
-	//SetConsoleBlank();
-	//DrawBox(4, 2, 5, 5, RED, 0);
-	//GotoXY(10, 10);
-	//return 0;
 	HideCursor(1);
 	FixConsoleWindow();
 	changeFont(21);
 	LoadSound(sound);
+	LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 	while (true) {
 		MainMenu(_A, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 	}

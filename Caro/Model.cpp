@@ -475,7 +475,6 @@ bool LoadData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, int& _X, in
 		inp.close();
 		return 0;
 	}
-	//ResetData(_A, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, remain);
 	for (int i = 0; i < B_SIZE; i++)
 		for (int j = 0; j < B_SIZE; j++) {
 			inp >> _A[i][j].c;
@@ -554,7 +553,7 @@ void SetSound(bool sound[], int type, bool value) {
 
 void PlayAudio(int type) {
 	if (type == BGM)
-		mciSendString(L"play assets/sounds/bgm.wav", NULL, 0, NULL);
+		mciSendString(L"play assets/sounds/bgm.wav ", NULL, 0, NULL);
 		//PlayAudio(TEXT("assets/sounds/bgm.wav"), NULL, SND_ASYNC);
 	else if (type == CLICK_SFX)
 		//mciSendString(L"play assets/sounds/click_sfx.wav", NULL, 0, NULL);
@@ -571,7 +570,6 @@ string CleanFileName(string s) {
 	while (s[i] == ' ')
 		i++;
 	while (s.back() == ' ')
-		//s.erase(s.size() - 1, 1);
 		s.pop_back();
 	string res = "";
 	for (; i < s.size(); i++)
