@@ -3,10 +3,6 @@
 #include "View.h"
 #include "Model.h"
 
-void StopSound() {
-	PlaySound(NULL, 0, SND_PURGE);
-}
-
 void GotoXY(int column, int line)
 {
 	COORD coord;

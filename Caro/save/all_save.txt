@@ -13,3 +13,6 @@ ssfgfdgdgdgfdfgdgfdg.txt
 aaaaaaaaaaaaaaaaaaaa.txt
 fadsadsadsadsadsa.txt
 test3.txt
+test4.txt
+draw.txt
+test5.txt

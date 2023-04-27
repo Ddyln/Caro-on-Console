@@ -1,7 +1,9 @@
-﻿#include "Data.h"
+﻿
+#include "Data.h"
 #include "Control.h"
 #include "View.h"
 #include "Model.h"
+
 
 _POINT _A[B_SIZE][B_SIZE]; //Ma trận bàn cờ
 bool _TURN; //true là lượt người thứ nhất và false là lượt người thứ hai
@@ -16,7 +18,7 @@ WinningPos WP[5];
 int main() {
 	HideCursor(1);
 	FixConsoleWindow();
-	changeFont(21);
+	changeFont(23);
 	LoadSound(sound);
 	LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 	while (true) {

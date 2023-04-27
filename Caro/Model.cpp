@@ -142,17 +142,19 @@ bool CheckWinLose(_POINT _A[B_SIZE][B_SIZE], int& saveTurn, int cX, int cY, Winn
 	return false;
 }
 
-// Kiểm tra xem thử có full bảng chưa
+// Kiểm tra xem thử có full 90% bảng chưa
 bool CheckFullBoard(_POINT _A[B_SIZE][B_SIZE]) {
-	for (int i = 0; i < B_SIZE; i++) {
-		for (int j = 0; j < B_SIZE; j++) {
-			if (_A[i][j].c == 0)
-				return false;
+	int cnt=0;
+		for (int i = 0; i < B_SIZE; i++) {
+			for (int j = 0; j < B_SIZE; j++) {
+				if (_A[i][j].c != 0)
+					cnt++;
+			}
 		}
-	}
-	return true;
+	if(cnt>=B_SIZE*B_SIZE*0.9)
+		return true;
+	return false;
 }
-
 // Kiểm tra dữ liệu tại ô đó và in ra X hoặc O
 int CheckBoard(_POINT _A[B_SIZE][B_SIZE], bool _TURN, int pX, int pY)
 {
@@ -207,194 +209,6 @@ bool EnterName(string& s, int len) {
 	return 1;
 }
 
-bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, float& lastPressed, WinningPos WP[5]) {
-	remain += lastPressed - clock();
-	ClearBox(49, 15, 64, 4);
-	TextColor(BLACK);
-	GotoXY(23, 1);
-	cout << "PAUSED";
-	TextColor(LIGHT_MAGENTA);
-	GotoXY(63, 11);
-	cout << BOX_V_LINE;
-	GotoXY(113, 11);
-	cout << BOX_V_LINE;
-	//DrawBoxMini(14, 15, 65, 4, LIGHT_MAGENTA);
-	for (int i = 0; i < 15; i++) {
-		GotoXY(78, 4 + i);
-		cout << V_LINE;
-	}
-	int x = 65, y = 5;
-	vector <_BUTTON> button;
-	button.resize(5);
-	button[0].data = "    SAVE    ";
-	button[1].data = "    LOAD    ";
-	button[2].data = "   OPTION   ";
-	button[3].data = "   RESUME   ";
-	button[4].data = "    EXIT    ";
-	for (int i = 0; i < button.size(); i++) {
-		button[i].x = x;
-		button[i].y = y + 3 * i;
-	}
-	TextColor(BLACK);
-	int n = button.size();
-	for (int i = 0; i < n; i++) {
-		GotoXY(button[i].x, button[i].y);
-		cout << button[i].data;
-	}
-	char c;
-	int cur = 0, prv = -1;
-	bool ok = 0;
-	HoverButton(button[cur]);
-	while (true) {
-		c = toupper(_getch());
-		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
-		if (c == ESC)
-			break;
-		else if (c == W || c == S) {
-			if (c == W)
-				prv = cur--;
-			else
-				prv = cur++;
-			if (cur < 0)
-				cur = n - 1;
-			if (cur >= n)
-				cur = 0;
-			UnhoverButton(button[prv], BLACK);
-			HoverButton(button[cur]);
-		}
-		else if (c == ENTER) {
-			if (cur == 4) {
-				ok = 1;
-				break;
-			}
-			if (cur == 3)
-				break;
-			if (cur == 1) {
-				UnhoverButton(button[cur], BLACK);
-				bool ok = LoadGameInPauseMenu(_A, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, lastPressed, WP);
-				if (ok)
-					return 1;
-				ClearBox(34, 15, 79, 4);
-				HoverButton(button[cur]);
-			}
-			else if (cur == 0) {
-				UnhoverButton(button[cur], BLACK);
-				string fileName = "";
-				GotoXY(88, 6);
-				TextColor(GREEN);
-				cout << "ENTER FILE NAME: ";
-				DrawBoxMini(25, 3, 84, 8, BLACK);
-				GotoXY(85, 9);
-				cout << L_TRIANGLE << ' ';
-				HideCursor(0);
-				bool ok = EnterName(fileName, 20);
-				if (ok) {
-					fileName += ".txt";
-					SaveData(_A, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
-					GotoXY(87, 13);
-					cout << "SAVED SUCCESSFULLY!";
-				}
-				HideCursor(1);
-				while (ok) {
-					char c = toupper(_getch());
-					if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
-					break;
-				}
-				ClearBox(34, 15, 79, 4);
-				HoverButton(button[cur]);
-			}
-			else {
-				UnhoverButton(button[cur], BLACK);
-				GotoXY(83, 5); cout << "MUSIC";
-				GotoXY(83, 12); cout << "CLICK_SFX";
-				TextColor(BLACK);
-				GotoXY(86, 7); cout << "TURN ON";
-				DrawBoard(1, 1, 98, 6, BLACK);
-				GotoXY(86, 10); cout << "TURN OFF";
-				DrawBoard(1, 1, 98, 9, BLACK);
-				
-				GotoXY(86, 14); cout << "TURN ON";
-				DrawBoard(1, 1, 98, 13, BLACK);
-				GotoXY(86, 17); cout << "TURN OFF";
-				DrawBoard(1, 1, 98, 16, BLACK);
-				int n = 4, i = 0;
-				_POINT a[4];
-				a[0] = { 99, 7, 0 };
-				a[1] = { 99, 10, 0 };
-				a[2] = { 99, 14, 0 };
-				a[3] = { 99, 17, 0 };
-				GotoXY(a[i].x, a[i].y); cout << L_TRIANGLE;
-				GotoXY(a[i].x + 2, a[i].y); cout << R_TRIANGLE;
-				if (sound[BGM])
-					GotoXY(a[0].x + 1, a[0].y), cout << "X";
-				else
-					GotoXY(a[1].x, a[1].y), cout << " X ";
-				if (sound[CLICK_SFX])
-					GotoXY(a[2].x, a[2].y), cout << " X ";
-				else
-					GotoXY(a[3].x, a[3].y), cout << " X ";
-				while (true) {
-					char c = toupper(_getch());
-					if (c == ESC) {
-						if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
-						break;
-					}
-					int newI = i;
-					if (c == ENTER) {
-						if (i == 0) {
-							GotoXY(a[0].x + 1, a[0].y);
-							cout << "X";
-							GotoXY(a[1].x + 1, a[1].y);
-							cout << " ";
-							SetSound(sound, BGM, 1);
-						}
-						else if (i == 1) {
-							GotoXY(a[1].x + 1, a[1].y);
-							cout << "X";
-							GotoXY(a[0].x + 1, a[0].y);
-							cout << " ";
-							SetSound(sound, BGM, 0);
-						}
-						else if (i == 2) {
-							GotoXY(a[2].x + 1, a[2].y);
-							cout << "X";
-							GotoXY(a[3].x + 1, a[3].y);
-							cout << " ";
-							SetSound(sound, CLICK_SFX, 1);
-						}
-						else {
-							GotoXY(a[3].x + 1, a[3].y);
-							cout << "X";
-							GotoXY(a[2].x + 1, a[2].y);
-							cout << " ";
-							SetSound(sound, CLICK_SFX, 0);
-						}
-						if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
-						continue;
-					}
-					else if (c == W)
-						newI = (--newI + n) % n;
-					else if (c == S)
-						newI = ++newI % n;
-					GotoXY(a[i].x, a[i].y); cout << ' ';
-					GotoXY(a[i].x + 2, a[i].y); cout << ' ';
-					i = newI;
-					GotoXY(a[i].x, a[i].y); cout << L_TRIANGLE;
-					GotoXY(a[i].x + 2, a[i].y); cout << R_TRIANGLE;
-					if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
-				}
-				ClearBox(34, 15, 79, 4);
-				HoverButton(button[cur]);
-			}
-		}
-	}
-	TextColor(BLACK);
-	GotoXY(23, 1);
-	cout << "      ";
-	lastPressed = clock();
-	return ok;
-}
-
 void StartGame(_POINT _A[B_SIZE][B_SIZE], bool reset, bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5]) {
 	SetupGame(_A, reset, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, cntRound, NamePlayer_O, NamePlayer_X, remain);
 	bool validEnter = true;
@@ -447,7 +261,7 @@ void StartGame(_POINT _A[B_SIZE][B_SIZE], bool reset, bool& _TURN, int& _COMMAND
 					case -1:
 					case 1:
 					case 0:
-						if (AskContinue(_A) != 'Y') {
+						if (AskContinue(_A, sound) != 'Y') {
 							return;
 						}
 						else {
@@ -552,9 +366,14 @@ void SetSound(bool sound[], int type, bool value) {
 }
 
 void PlayAudio(int type) {
-	if (type == BGM)
-		mciSendString(L"play assets/sounds/bgm.wav ", NULL, 0, NULL);
-		//PlayAudio(TEXT("assets/sounds/bgm.wav"), NULL, SND_ASYNC);
+	if (type == BGM) {
+		//mciSendString(L"open \"%s\" type mpegvideo assets/sounds/bgm.wav alias BGM", NULL, 0, NULL);
+		//mciSendString(L"play BGM repeat", NULL, 0, NULL);
+		DWORD error = mciSendString(L"play \"assets/sounds/bgm.wav\" ", NULL, 0, NULL);
+		//GotoXY(0, 0);
+		//cout << error;
+		//PlaySound(TEXT("assets/sounds/bgm.wav"), NULL, SND_ASYNC | SND_LOOP);
+	}
 	else if (type == CLICK_SFX)
 		//mciSendString(L"play assets/sounds/click_sfx.wav", NULL, 0, NULL);
 		PlaySound(TEXT("assets/sounds/click_sfx.wav"), NULL, SND_ASYNC);

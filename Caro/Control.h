@@ -1,6 +1,5 @@
 #pragma once
 
-void StopSound();
 void GotoXY(int column, int line);
 int whereX();
 int whereY();

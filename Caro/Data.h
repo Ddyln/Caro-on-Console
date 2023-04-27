@@ -3,7 +3,7 @@
 
 #define BGM 0
 #define CLICK_SFX 1
-#define SOUND_PATH string("save\\sound.txt")
+#define SOUND_PATH string("save/sound.txt")
 
 // Included libraries
 #include <iostream>
@@ -14,6 +14,8 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <mmsystem.h>
+#include <windows.h>
 
 // Namespace
 using namespace std;

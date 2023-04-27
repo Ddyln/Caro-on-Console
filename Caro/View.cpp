@@ -209,7 +209,7 @@ void DrawButton()
 	DrawBoxMini(14, 3, 89, 15, BLUE);
 	GotoXY(93, 16);
 	TextColor(BLUE);
-	cout << "SETTING";
+	cout << "OPTION";
 	Sleep(200);
 	DrawBoxMini(14, 3, 89, 18, BLUE);
 	GotoXY(94, 19);
@@ -257,11 +257,51 @@ int ProcessFinish(_POINT _A[B_SIZE][B_SIZE], int& _X, int& _Y, bool& _TURN, int 
 	return pWhoWin;
 }
 
-char AskContinue(_POINT _A[B_SIZE][B_SIZE])
+char AskContinue(_POINT _A[B_SIZE][B_SIZE], bool sound[])
 {
-	GotoXY(20, 25);
-	cout << "DO YOU WANT CONTINUE ?? [Y/N] ";
-	return toupper(_getch());
+	GotoXY(50, 19);
+	cout << "DO YOU WANT TO CONTINUE ??";
+	TextColor(LIGHT_BLUE);
+	//GotoXY(53, 22); cout << "YES -> PRESS Y ";
+	//TextColor(LIGHT_RED);
+	//GotoXY(53, 23); cout << "NO  -> PRESS N ";
+	DrawBoxMini(10, 3, WIDTH / 2 - 10, 21, RED);
+	GotoXY(WIDTH / 2 - 10 + 3, 22);
+	TextColor(RED);
+	cout << "YES";
+	DrawBoxMini(10, 3, WIDTH / 2 + 5, 21, BLUE);
+	GotoXY(WIDTH / 2 + 5 + 4, 22);
+	TextColor(BLUE);
+	cout << "NO";
+	bool ok = 1;
+	while (true) {
+		char c = toupper(_getch());
+		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+		if (c == ENTER)
+			return (ok ? 'Y' : 'N');
+		if (c == A || c == D)
+			ok ^= 1;
+		if (ok) {
+			DrawBoxMini(10, 3, WIDTH / 2 - 10, 21, RED);
+			GotoXY(WIDTH / 2 - 10 + 3, 22);
+			TextColor(RED);
+			cout << "YES";
+			DrawBoxMini(10, 3, WIDTH / 2 + 5, 21, BLUE);
+			GotoXY(WIDTH / 2 + 5 + 4, 22);
+			TextColor(BLUE);
+			cout << "NO";
+		}
+		else {
+			DrawBoxMini(10, 3, WIDTH / 2 - 10, 21, BLUE);
+			GotoXY(WIDTH / 2 - 10 + 3, 22);
+			TextColor(BLUE);
+			cout << "YES";
+			DrawBoxMini(10, 3, WIDTH / 2 + 5, 21, RED);
+			GotoXY(WIDTH / 2 + 5 + 4, 22);
+			TextColor(RED);
+			cout << "NO";
+		}
+	}
 }
 
 void DrawBanner(int x, int y, int color) {
@@ -280,21 +320,21 @@ void DrawBanner(int x, int y, int color) {
 
 void AskTurn(bool& _TURN, bool sound[], string& NamePlayer_O, string& NamePlayer_X) { // Hỏi lượt đánh trước
 	SetConsoleBlank();
-	DrawBoxMini(72, 20, 27, 8, GREEN);//vẽ khung to
+	DrawBoxMini(72, 20, 24, 8, BLACK);//vẽ khung to
 	// Vẽ hai ô hiển thị O vs X
 	int wide = 20;
 	int high = 10;
 	int x = 20;
 	int y = 10;
-	DrawAsciiFile(0, 1, "DrawTurn", BLUE);
-	Draw(41, 15, "OTurn", GRAY);
-	Draw(72, 15, "XTurn", GRAY);
+	DrawAsciiFile(0, 2, "DrawTurn", MAGENTA);
+	Draw(38, 15, "OTurn", GRAY);
+	Draw(69, 15, "XTurn", GRAY);
 	// Vẽ ô hiển thị tên
 	int WideBoxName = 30;
 	int HighBoxName = 3;
-	int X_BoxName = 48;
+	int X_BoxName = 45;
 	int Y_BoxName = 10;
-	DrawBoxMini(WideBoxName, HighBoxName, X_BoxName, Y_BoxName, MAGENTA);
+	DrawBoxMini(WideBoxName, HighBoxName, X_BoxName, Y_BoxName, LIGHT_MAGENTA);
 	GotoXY(X_BoxName + WideBoxName / 2 - NamePlayer_O.size() / 2, Y_BoxName + 1);
 	TextColor(GREEN);
 	cout << NamePlayer_O;
@@ -354,24 +394,22 @@ void AskTurn(bool& _TURN, bool sound[], string& NamePlayer_O, string& NamePlayer
 		}
 	}
 	GotoXY(x, y);
-	//DrawAsciiFile(x + wide / 2, y + high / 2 - 2, "DrawTurnO", BLUE);
-	//VeO2(43, 17, O_COLOR);
-	Draw(41, 15, "OTurnC", O_COLOR);
+	Draw(38, 15, "OTurnC", O_COLOR);
 	while (true) {
 		unsigned char c = toupper(_getch());
 		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
 		if (c == 'A' || c == 'D') {
 			if (c == 'A') {
 				if (x == 50) {
-					Draw(72, 15, "XTurn", GRAY);
-					Draw(41, 15, "OTurnC", O_COLOR);
+					Draw(69, 15, "XTurn", GRAY);
+					Draw(38, 15, "OTurnC", O_COLOR);
 					x -= 30;
 				}
 			}
 			else if (c == 'D') {
 				if (x == 20) {
-					Draw(72, 15, "XTurnC", X_COLOR);
-					Draw(41, 15, "OTurn", GRAY);
+					Draw(69, 15, "XTurnC", X_COLOR);
+					Draw(38, 15, "OTurn", GRAY);
 					x += 30;
 				}
 			}
@@ -411,43 +449,24 @@ void EnterNamePlayer(string& NamePlayer_O, string& NamePlayer_X) {
 	unsigned char x = 16;
 	SetConsoleBlank();
 	HideCursor(0);
-	DrawBanner(15, 2, GREEN);
-	DrawEnterName(30, 3, MAGENTA);
+	DrawBanner(9, 2, GREEN);
+	DrawEnterName(19, 3, MAGENTA);
 	TextColor(BLACK);
 	GotoXY(50, 27);
-	cout << "< 20 character max >";
-	DrawBoxMini(49, 3, 35, 14, GREEN);
-	TextColor(CYAN);
+	cout << "< 14 character max >";
+	DrawBoxMini(49, 3, 35, 14, CYAN);
+	TextColor(BLUE);
 	GotoXY(51, 13); cout << " Player 1's Name ";
 	TextColor(RED);
 	GotoXY(48, 15); cout << x << ' ';
-	//while (true) {
-	//	GotoXY(53, 15);
-	//	getline(cin, NamePlayer_O);
-	//	if (NamePlayer_O.size() <= 20)
-	//		break;
-	//	GotoXY(53, 15);
-	//	for (int i = 0; i < NamePlayer_O.size(); i++)
-	//		cout << ' ';
-	//	GotoXY(53, 15);
-	//}
-	EnterName(NamePlayer_O, 20);
-	DrawBoxMini(49, 3, 35, 19, GREEN);
-	TextColor(CYAN);
+	NamePlayer_O = NamePlayer_X = "";
+	EnterName(NamePlayer_O, 14);
+	DrawBoxMini(49, 3, 35, 19, CYAN);
+	TextColor(BLUE);
 	GotoXY(51, 18); cout << " Player 2's Name ";
 	TextColor(RED);
 	GotoXY(48, 20); cout << x << ' ';
-	//while (true) {
-	//	GotoXY(53, 20);
-	//	getline(cin, NamePlayer_X);
-	//	if (NamePlayer_X.size() <= 20)
-	//		break;
-	//	GotoXY(53, 20);
-	//	for (int i = 0; i < NamePlayer_X.size(); i++)
-	//		cout << ' ';
-	//	GotoXY(53, 20);
-	//}
-	EnterName(NamePlayer_X, 20);
+	EnterName(NamePlayer_X, 14);
 	HideCursor(1);
 }
 
@@ -655,11 +674,11 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool so
 
 void DrawSaveFilesPageInPauseMenu(const vector <_BUTTON>& v, int curPage, int filesPerPage) {
 	TextColor(MAGENTA);
-	GotoXY(84, 16);
+	GotoXY(84, 15);
 	for (int i = 0; i < 24; i++)
 		cout << H_LINE;
 	TextColor(BLACK);
-	GotoXY(90, 17);
+	GotoXY(90, 16);
 	cout << "< ";
 	if (curPage <= filesPerPage)
 		cout << "0";
@@ -671,7 +690,7 @@ void DrawSaveFilesPageInPauseMenu(const vector <_BUTTON>& v, int curPage, int fi
 
 	TextColor(BLUE);
 	for (int i = (curPage - 1) * filesPerPage, cnt = 0; i < curPage * filesPerPage; i++, cnt++) {
-		GotoXY(79, 5 + 2 * cnt);
+		GotoXY(79, 4 + 2 * cnt);
 		for (int j = 0; j < 30; j++)
 			cout << " ";
 		if (i < v.size()) {
@@ -703,7 +722,7 @@ bool LoadGameInPauseMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, 
 	}
 	inp.close();
 	if (v.size() == 1 && v[0].data == "") {
-		GotoXY(89, 10);
+		GotoXY(89, 9);
 		TextColor(BLACK);
 		cout << "< EMPTY DATA >";
 		while (true) {
@@ -715,7 +734,7 @@ bool LoadGameInPauseMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, 
 	}
 	for (int i = 0, cnt = 1; i < v.size(); i++, cnt = cnt % filesPerPage + 1) {
 		v[i].x = 84;
-		v[i].y = 4 + 2 * cnt - 1;
+		v[i].y = 3 + 2 * cnt - 1;
 		int x = (24 - v[i].data.size()) / 2;
 		if (v[i].data.size() % 2 == 1)
 			v[i].data += " ";
@@ -875,7 +894,7 @@ void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[
 				if (y == 16)
 				{
 					GotoXY(x - 1, y);
-					cout << "SETTING";
+					cout << "OPTION";
 				}
 				if (y == 19)
 				{
@@ -906,7 +925,7 @@ void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[
 				if (y == 16)
 				{
 					GotoXY(x - 1, y);
-					cout << "SETTING";
+					cout << "OPTION";
 				}
 				if (y == 19)
 				{
@@ -936,7 +955,7 @@ void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[
 				if (y == 16)
 				{
 					GotoXY(x - 1, y);
-					cout << "SETTING";
+					cout << "OPTION";
 				}
 				if (y == 19)
 				{
@@ -967,7 +986,7 @@ void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[
 				if (y == 16)
 				{
 					GotoXY(x - 1, y);
-					cout << "SETTING";
+					cout << "OPTION";
 				}
 				if (y == 19)
 				{
@@ -1010,78 +1029,72 @@ void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[
 	}
 }
 
-//Help1 2 là để nhét dô HelpScreen cho gọn
-void Help1()
+void HelpScreen(bool sound[])
 {
-	TextColor(RED);
-	GotoXY(20, 7);
-	cout << L_TRIANGLE << " RULE " << R_TRIANGLE;
-	TextColor(GREEN);
-	GotoXY(20, 14);
-	cout << L_TRIANGLE << " MOVE " << R_TRIANGLE;
-	TextColor(MAGENTA);
-	GotoXY(18, 20);
-	cout << L_TRIANGLE << " ABOUT US " << R_TRIANGLE;
-}
+	SetConsoleBlank();
+	DrawBox(98, 25, 11, 2, CYAN, 0);
+	DrawBoxMini(94, 23, 13, 3, LIGHT_CYAN);
+	for (int i = 0; i < 21; i++)
+	{
+		TextColor(LIGHT_CYAN);
+		GotoXY(34, 4 + i);
+		cout << V_LINE;
+	}
 
-void Help2()
-{
 	TextColor(RED);
+	GotoXY(20, 8);
+	cout << L_TRIANGLE << " RULE " << R_TRIANGLE;
 	GotoXY(40, 5);
 	cout << "The game is played on a board with 12 rows and 12 columns." << endl;
 	GotoXY(40, 7);
 	cout << "To win the round, player needs to make a line consisting of 5" << endl;
 	GotoXY(40, 8);
-	cout << "consecutive pieces horizontally, vertically or diagonally." << endl;
-	GotoXY(40, 10);
-	cout << "If more than 90% of the board has been marked, the result will ";
+	cout << "consecutive pieces of the same type horizontally, vertically or" << endl;
+	GotoXY(40, 9);
+	cout << "diagonally. Time for each turn is 15 seconds." << endl;
 	GotoXY(40, 11);
+	cout << "If more than 90% of the board has been marked, the result will ";
+	GotoXY(40, 12);
 	cout << "be a draw.";
+
 	TextColor(GREEN);
-	GotoXY(40, 14);
-	cout << "Up: W";
+	GotoXY(20, 15);
+	cout << L_TRIANGLE << " MOVE " << R_TRIANGLE;
 	GotoXY(40, 15);
+	cout << "Up: W";
+	GotoXY(40, 16);
 	cout << "Down: S";
-	GotoXY(55, 14);
-	cout << "Left: A";
 	GotoXY(55, 15);
+	cout << "Left: A";
+	GotoXY(55, 16);
 	cout << "Right: D";
-	GotoXY(70, 14);
+	GotoXY(70, 15);
 	cout << "Choose: Enter";
+	GotoXY(70, 16);
+	cout << "Pause game: Esc";
+
 	TextColor(MAGENTA);
-	GotoXY(76, 19);
-	cout << "Teacher: Truong Toan Thinh";
+	GotoXY(18, 21);
+	cout << L_TRIANGLE << " ABOUT US " << R_TRIANGLE;
 	GotoXY(76, 20);
-	cout << "Group: 13";
+	cout << "Teacher: Truong Toan Thinh";
 	GotoXY(76, 21);
+	cout << "Group: 13";
+	GotoXY(76, 22);
 	cout << "22CTT4 - HCMUS";
-	GotoXY(40, 18);
-	cout << "Dang Duy Lan      -  22120182";
 	GotoXY(40, 19);
-	cout << "Nguyen Nhat Long  -  22120194";
+	cout << "Dang Duy Lan      -  22120182";
 	GotoXY(40, 20);
-	cout << "Hoang Thanh Man   -  22120200";
+	cout << "Nguyen Nhat Long  -  22120194";
 	GotoXY(40, 21);
-	cout << "Ly Truong Nam     -  22120218";
+	cout << "Hoang Thanh Man   -  22120200";
 	GotoXY(40, 22);
+	cout << "Ly Truong Nam     -  22120218";
+	GotoXY(40, 23);
 	cout << "Tran Thao Ngan    -  22120225";
 	TextColor(LIGHT_RED);
 	GotoXY(47, 26);
 	cout << " " << L_TRIANGLE << " PRESS ESC TO COMEBACK " << R_TRIANGLE << " ";
-}
-
-void HelpScreen(bool sound[])
-{
-	SetConsoleBlank();
-	DrawBox(98, 25, 11, 2, CYAN, 0);
-	DrawBoxMini(95, 23, 13, 3, LIGHT_CYAN);
-	for (int i = 0; i < 21; i++)
-	{
-		GotoXY(34, 4 + i);
-		cout << V_LINE;
-	}
-	Help1();
-	Help2();
 	while (true) {
 		char c = _getch();
 		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
@@ -1262,13 +1275,13 @@ void VeO2(int x, int y, int color) {
 }
 
 void TurnX() {
-	VeO1(95, 5, GRAY);
-	VeX2(74, 5, RED);
+	VeO1(95, 4, GRAY);
+	VeX2(74, 4, RED);
 }
 
 void TurnO() {
-	VeO2(95, 5, BLUE);
-	VeX1(74, 5, GRAY);
+	VeO2(95, 4, BLUE);
+	VeX1(74, 4, GRAY);
 }
 
 string getFileContents(ifstream& File)
@@ -1307,54 +1320,242 @@ void DrawAsciiFile(int x, int y, string nameFile, int color) {
 
 void DrawTimer(float time, bool _TURN) {
 	time = float(int(time * 100)) / 100;
-	//DrawNumber(69, 21, 0, MAGENTA);
 	int num[2] = { 0 };
 	num[0] = (int)ceil(time) / 10;
 	num[1] = (int)ceil(time) % 10;
-	//num[2] = int(time * 10) % 10;
-	//num[3] = int(time * 100) % 10;
 	for (int i = 0; i < 2; i++)
-		DrawNumber(80 + i * 10 - (i == 1 && (num[0] == 1 || num[1] == 9)), 21, num[i], (num[0] == 0 && num[1] <= 5 ? RED : YELLOW));
+		DrawNumber(80 + i * 10 - (i == 1 && (num[0] == 1 || num[1] == 9)), 20, num[i], (num[0] == 0 && num[1] <= 5 ? RED : YELLOW));
+}
+
+bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, float& lastPressed, WinningPos WP[5]) {
+	remain += lastPressed - clock();
+	ClearBox(49, 15, 64, 3);
+	TextColor(BLACK);
+	GotoXY(87, 1);
+	cout << "PAUSED";
+	TextColor(LIGHT_MAGENTA);
+	GotoXY(63, 10);
+	cout << BOX_V_LINE;
+	GotoXY(113, 10);
+	cout << BOX_V_LINE;
+	for (int i = 0; i < 15; i++) {
+		GotoXY(78, 3 + i);
+		cout << V_LINE;
+	}
+	int x = 65, y = 4;
+	vector <_BUTTON> button;
+	button.resize(5);
+	button[0].data = "    SAVE    ";
+	button[1].data = "    LOAD    ";
+	button[2].data = "   OPTION   ";
+	button[3].data = "   RESUME   ";
+	button[4].data = "    EXIT    ";
+	for (int i = 0; i < button.size(); i++) {
+		button[i].x = x;
+		button[i].y = y + 3 * i;
+	}
+	TextColor(BLACK);
+	int n = button.size();
+	for (int i = 0; i < n; i++) {
+		GotoXY(button[i].x, button[i].y);
+		cout << button[i].data;
+	}
+	char c;
+	int cur = 0, prv = -1;
+	bool ok = 0;
+	HoverButton(button[cur]);
+	while (true) {
+		c = toupper(_getch());
+		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+		if (c == ESC)
+			break;
+		else if (c == W || c == S) {
+			if (c == W)
+				prv = cur--;
+			else
+				prv = cur++;
+			if (cur < 0)
+				cur = n - 1;
+			if (cur >= n)
+				cur = 0;
+			UnhoverButton(button[prv], BLACK);
+			HoverButton(button[cur]);
+		}
+		else if (c == ENTER) {
+			if (cur == 4) {
+				ok = 1;
+				break;
+			}
+			if (cur == 3)
+				break;
+			if (cur == 1) {
+				UnhoverButton(button[cur], BLACK);
+				bool ok = LoadGameInPauseMenu(_A, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, lastPressed, WP);
+				if (ok)
+					return 1;
+				ClearBox(34, 15, 79, 3);
+				HoverButton(button[cur]);
+			}
+			else if (cur == 0) {
+				UnhoverButton(button[cur], BLACK);
+				string fileName = "";
+				GotoXY(88, 6);
+				TextColor(GREEN);
+				cout << "ENTER FILE NAME: ";
+				DrawBoxMini(25, 3, 84, 8, BLACK);
+				GotoXY(85, 9);
+				cout << L_TRIANGLE << ' ';
+				HideCursor(0);
+				bool ok = EnterName(fileName, 20);
+				if (ok) {
+					fileName += ".txt";
+					SaveData(_A, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
+					GotoXY(87, 13);
+					cout << "SAVED SUCCESSFULLY!";
+				}
+				HideCursor(1);
+				while (ok) {
+					char c = toupper(_getch());
+					if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+					break;
+				}
+				ClearBox(34, 15, 79, 3);
+				HoverButton(button[cur]);
+			}
+			else {
+				UnhoverButton(button[cur], BLACK);
+				GotoXY(83, 4); cout << "MUSIC";
+				GotoXY(83, 11); cout << "CLICK_SFX";
+				TextColor(BLACK);
+				GotoXY(86, 6); cout << "TURN ON";
+				DrawBoard(1, 1, 98, 5, BLACK);
+				GotoXY(86, 9); cout << "TURN OFF";
+				DrawBoard(1, 1, 98, 8, BLACK);
+				
+				GotoXY(86, 13); cout << "TURN ON";
+				DrawBoard(1, 1, 98, 12, BLACK);
+				GotoXY(86, 16); cout << "TURN OFF";
+				DrawBoard(1, 1, 98, 15, BLACK);
+				int n = 4, i = 0;
+				_POINT a[4];
+				a[0] = { 99, 6, 0 };
+				a[1] = { 99, 9, 0 };
+				a[2] = { 99, 13, 0 };
+				a[3] = { 99, 16, 0 };
+				GotoXY(a[i].x, a[i].y); cout << L_TRIANGLE;
+				GotoXY(a[i].x + 2, a[i].y); cout << R_TRIANGLE;
+				if (sound[BGM])
+					GotoXY(a[0].x + 1, a[0].y), cout << "X";
+				else
+					GotoXY(a[1].x, a[1].y), cout << " X ";
+				if (sound[CLICK_SFX])
+					GotoXY(a[2].x, a[2].y), cout << " X ";
+				else
+					GotoXY(a[3].x, a[3].y), cout << " X ";
+				while (true) {
+					char c = toupper(_getch());
+					if (c == ESC) {
+						if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+						break;
+					}
+					int newI = i;
+					if (c == ENTER) {
+						if (i == 0) {
+							GotoXY(a[0].x + 1, a[0].y);
+							cout << "X";
+							GotoXY(a[1].x + 1, a[1].y);
+							cout << " ";
+							SetSound(sound, BGM, 1);
+						}
+						else if (i == 1) {
+							GotoXY(a[1].x + 1, a[1].y);
+							cout << "X";
+							GotoXY(a[0].x + 1, a[0].y);
+							cout << " ";
+							SetSound(sound, BGM, 0);
+						}
+						else if (i == 2) {
+							GotoXY(a[2].x + 1, a[2].y);
+							cout << "X";
+							GotoXY(a[3].x + 1, a[3].y);
+							cout << " ";
+							SetSound(sound, CLICK_SFX, 1);
+						}
+						else {
+							GotoXY(a[3].x + 1, a[3].y);
+							cout << "X";
+							GotoXY(a[2].x + 1, a[2].y);
+							cout << " ";
+							SetSound(sound, CLICK_SFX, 0);
+						}
+						if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+						continue;
+					}
+					else if (c == W)
+						newI = (--newI + n) % n;
+					else if (c == S)
+						newI = ++newI % n;
+					GotoXY(a[i].x, a[i].y); cout << ' ';
+					GotoXY(a[i].x + 2, a[i].y); cout << ' ';
+					i = newI;
+					GotoXY(a[i].x, a[i].y); cout << L_TRIANGLE;
+					GotoXY(a[i].x + 2, a[i].y); cout << R_TRIANGLE;
+					if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+				}
+				ClearBox(34, 15, 79, 3);
+				HoverButton(button[cur]);
+			}
+		}
+	}
+	TextColor(BLACK);
+	GotoXY(87, 1);
+	cout << "      ";
+	lastPressed = clock();
+	return ok;
 }
 
 void DrawTimerBox(bool _TURN) {
-	DrawBox(21, 9, 78, 20, (_TURN ? O_COLOR : X_COLOR), 0);
+	DrawBox(23, 9, 77, 19, (_TURN ? O_COLOR : X_COLOR), 0);
 	//DrawAsciiFile(68 + 2 * 10, 26, "Dot", YELLOW);
 }
 
 void DrawScoreBoard(bool _TURN, int _X, int _Y, int cntWinO, int cntLoseO, int cntRound) {
 	unsigned char p = 219;
-	DrawBox(51, 17, 63, 3, LIGHT_MAGENTA, 0);
-	for (int i = 0; i < 49; i++)
+	DrawBox(51, 17, 63, 2, LIGHT_MAGENTA, 0);
+	for (int i = 0; i < 47; i++)
 	{
 		TextColor(MAGENTA);
-		GotoXY(64 + i, 2); cout << H_LINE;
+		GotoXY(6 + i, 1); cout << H_LINE;
 	}
-	TextColor(BLUE);
-	GotoXY(82, 2);
+	TextColor(BLACK);
+	GotoXY(23, 1);
 	cout << " - ROUND " << cntRound << " - ";
 	ShowTurn(_X, _Y, !_TURN, true);
 	TextColor(LIGHT_MAGENTA);
-	DrawNumber(74, 12, cntLoseO, LIGHT_CYAN);
-	DrawNumber(96, 12, cntWinO, LIGHT_CYAN);
-	GotoXY(88, 14); cout << p << p;
-	GotoXY(88, 16); cout << p << p;
+	DrawNumber(74, 11, cntLoseO, LIGHT_CYAN);
+	DrawNumber(96, 11, cntWinO, LIGHT_CYAN);
+	GotoXY(88, 13); cout << p << p;
+	GotoXY(88, 15); cout << p << p;
 
 	TextColor(LIGHT_MAGENTA);
-	GotoXY(63, 11); cout << BOX_LEFT;
+	GotoXY(63, 10); cout << BOX_LEFT;
 	for (int i = 0; i < 49; i++)
 	{
-		GotoXY(64 + i, 11);
+		GotoXY(64 + i, 10);
 		cout << BOX_H_LINE;
 	}
 	cout << BOX_RIGHT;
 	TextColor(BLUE);
-	GotoXY(83, 11); cout << " - SCORE - ";
-
+	GotoXY(83, 10); cout << " - SCORE - ";
 }
 
 void DrawGameInfo(_POINT _A[B_SIZE][B_SIZE], bool _TURN, int _X, int _Y, int cX, int cY, int cntWinO, int cntLoseO, int cntRound) {
 	DrawBoard(B_SIZE, B_SIZE, BOARD_X, BOARD_Y, BLACK);
+	TextColor(MAGENTA);
+	for (int i = 2; i < 27; i++) {
+		GotoXY(WIDTH / 2 - 2, i);
+		cout << V_LINE;
+	}
 	DrawScoreBoard(_TURN, _X, _Y, cntWinO, cntLoseO, cntRound);
 	DrawTimerBox(_TURN);
 	for (int i = 0; i < B_SIZE; i++)
@@ -2277,37 +2478,37 @@ void ascii_art(string input, int x, int y, int t_color)
 }
 
 void DrawXWin() {
-	ClearBox(44, 7, 66, 21);
-	DrawAsciiFile(0, 20, "DrawXWin02", RED);
+	ClearBox(44, 7, 68, 20);
+	DrawAsciiFile(0, 18, "DrawXWin02", RED);
 	Sleep(150);
-	DrawAsciiFile(0, 20, "DrawXWin02", BLUE);
+	DrawAsciiFile(0, 18, "DrawXWin02", BLUE);
 	Sleep(150);
-	DrawAsciiFile(0, 20, "DrawXWin02", YELLOW);
+	DrawAsciiFile(0, 18, "DrawXWin02", YELLOW);
 	Sleep(150);
-	DrawAsciiFile(0, 20, "DrawXWin02", RED);
+	DrawAsciiFile(0, 18, "DrawXWin02", RED);
 	Sleep(150);
-	DrawAsciiFile(0, 20, "DrawXWin02", BLUE);
+	DrawAsciiFile(0, 18, "DrawXWin02", BLUE);
 	Sleep(150);
-	DrawAsciiFile(0, 20, "DrawXWin02", YELLOW);
+	DrawAsciiFile(0, 18, "DrawXWin02", YELLOW);
 	Sleep(150);
-	DrawAsciiFile(0, 20, "DrawXWin02", X_COLOR);
+	DrawAsciiFile(0, 18, "DrawXWin02", X_COLOR);
 }
 
 void DrawOWin() {
-	ClearBox(44, 7, 66, 21);
-	DrawAsciiFile(0, 20, "DrawOWin02", RED);
+	ClearBox(44, 7, 68, 20);
+	DrawAsciiFile(0, 18, "DrawOWin02", RED);
 	Sleep(100);
-	DrawAsciiFile(0, 20, "DrawOWin02", BLUE);
+	DrawAsciiFile(0, 18, "DrawOWin02", BLUE);
 	Sleep(100);
-	DrawAsciiFile(0, 20, "DrawOWin02", YELLOW);
+	DrawAsciiFile(0, 18, "DrawOWin02", YELLOW);
 	Sleep(100);
-	DrawAsciiFile(0, 20, "DrawOWin02", RED);
+	DrawAsciiFile(0, 18, "DrawOWin02", RED);
 	Sleep(100);
-	DrawAsciiFile(0, 20, "DrawOWin02", BLUE);
+	DrawAsciiFile(0, 18, "DrawOWin02", BLUE);
 	Sleep(100);
-	DrawAsciiFile(0, 20, "DrawOWin02", YELLOW);
+	DrawAsciiFile(0, 18, "DrawOWin02", YELLOW);
 	Sleep(100);
-	DrawAsciiFile(0, 20, "DrawOWin02", O_COLOR);
+	DrawAsciiFile(0, 18, "DrawOWin02", O_COLOR);
 }
 
 void SetOWin(string NamePlayer_O, WinningPos WP[5], _POINT _A[B_SIZE][B_SIZE]) {
@@ -2329,13 +2530,13 @@ void SetOWin(string NamePlayer_O, WinningPos WP[5], _POINT _A[B_SIZE][B_SIZE]) {
 		Sleep(80);
 		cout << " O ";
 	}
-	GotoXY(50, 29);
+	GotoXY(48, 28);
 	cout << "<< PRESS ENTER TO CONTINUE >>";
 	int x = 3;
 	int y = 2;
 	long long a[] = { RED,BLUE,GREEN,YELLOW,GRAY,BLUE };
 	int n = sizeof(a) / sizeof(a[0]);
-	ClearBox(21, 9, 78, 20);
+	ClearBox(25, 9, 76, 19);
 	while (true) {
 		unsigned char c;
 		if (_kbhit()) {
@@ -2399,13 +2600,14 @@ void SetXWin(string NamePlayer_X, WinningPos WP[5], _POINT _A[B_SIZE][B_SIZE]) {
 		Sleep(80);
 		cout << " X ";
 	}
-	GotoXY(50, 29);
+	//
+	GotoXY(48, 28);
 	cout << "<< PRESS ENTER TO CONTINUE >>";
 	int x = 3;
 	int y = 2;
 	long long a[] = { RED,BLUE,GREEN,YELLOW,GRAY,RED };
 	int n = sizeof(a) / sizeof(a[0]);
-	ClearBox(21, 9, 78, 20);
+	ClearBox(25, 9, 76, 19);
 	while (true) {
 		unsigned char c;
 		if (_kbhit()) {
