@@ -3,7 +3,7 @@
 
 #define BGM 0
 #define CLICK_SFX 1
-#define SOUND_PATH string("save/sound.txt")
+#define SOUND_PATH "save/sound.txt"
 
 // Included libraries
 #include <iostream>
@@ -49,6 +49,7 @@ using namespace std;
 #define X_COLOR RED
 #define O_COLOR BLUE
 #define BACKGROUND_YELLOW (14 << 4)
+#define BACKGROUND_RED (12 << 4)
 
 // ASCII code
 // special key

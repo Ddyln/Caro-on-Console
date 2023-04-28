@@ -336,10 +336,6 @@ bool SaveData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, int& _X, in
 void LoadSound(bool sound[]) {
 	fstream inp;
 	inp.open(SOUND_PATH, ios::in);
-	if (inp.fail()) {
-		cout << "Can't open file";
-		return;
-	}
 	int n = 2;
 	for (int i = 0; i < n; i++)
 		inp >> sound[i];
@@ -353,10 +349,6 @@ void LoadSound(bool sound[]) {
 void SetSound(bool sound[], int type, bool value) {
 	fstream out;
 	out.open(SOUND_PATH, ios::out);
-	if (out.fail()) {
-		cout << "Can't open file";
-		return;
-	}
 	sound[type] = value;
 	int n = 2;
 	for (int i = 0; i < n; i++)

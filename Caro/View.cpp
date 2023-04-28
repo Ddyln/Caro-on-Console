@@ -842,6 +842,7 @@ void DrawCaroBox(int w, int h, int x, int y, int Time)
 	CaroAnimation();
 	Sleep(500);
 	PrintNote(24, 21, BLACK);
+
 }
 
 void MainScreen() {

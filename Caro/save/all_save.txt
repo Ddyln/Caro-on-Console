@@ -16,3 +16,8 @@ test3.txt
 test4.txt
 draw.txt
 test5.txt
+asd.txt
+lam.txt
+ppt.txt
+met.txt
+qua!!.txt
