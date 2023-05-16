@@ -1,1 +1,9 @@
-﻿  Caro.vcxproj -> D:\Code\Caro\x64\Debug\Caro.exe
+﻿  Model.cpp
+D:\Code\Caro\Caro\Data.h(53,1): warning C4005: 'BACKGROUND_RED': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\consoleapi2.h(41,1): message : see previous definition of 'BACKGROUND_RED'
+D:\Code\Caro\Caro\Model.cpp(243,20): warning C4244: 'initializing': conversion from 'clock_t' to 'float', possible loss of data
+D:\Code\Caro\Caro\Model.cpp(250,23): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+D:\Code\Caro\Caro\Model.cpp(293,24): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+D:\Code\Caro\Caro\Model.cpp(298,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\Code\Caro\Caro\Model.cpp(347,25): warning C4244: '=': conversion from 'clock_t' to 'float', possible loss of data
+  Caro.vcxproj -> D:\Code\Caro\x64\Debug\Caro.exe

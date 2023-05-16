@@ -16,6 +16,7 @@
 #include <string>
 #include <mmsystem.h>
 #include <windows.h>
+#include <queue>
 
 // Namespace
 using namespace std;

@@ -12,6 +12,7 @@ int _X, _Y, cX, cY; //Tọa độ hiện hành trên màn hình bàn cờ
 int cntX, cntO, saveTurn = 0, cntWinO = 0, cntLoseO = 0, cntDraw = 0, cntRound = 1;
 float remain;
 bool sound[] = { 1, 1 };
+bool pvp = 1;
 string NamePlayer_O = "", NamePlayer_X = "";
 WinningPos WP[5];
 
@@ -22,7 +23,7 @@ int main() {
 	LoadSound(sound);
 	LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 	while (true) {
-		MainMenu(_A, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
+		MainMenu(_A, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 	}
 	return 0;
 }

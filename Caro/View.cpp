@@ -247,7 +247,7 @@ int ProcessFinish(_POINT _A[B_SIZE][B_SIZE], int& _X, int& _Y, bool& _TURN, int 
 		break;
 	case 0:
 		SetConsoleBlank();
-		ascii_art(" DRAW !!", 1, 5, RED);
+		ascii_art("                    DRAW !!", 1, 5, RED);
 		break;
 	case 2:
 		_TURN = !_TURN;
@@ -318,7 +318,7 @@ void DrawBanner(int x, int y, int color) {
 	SetConsoleOutputCP(437);
 }
 
-void AskTurn(bool& _TURN, bool sound[], string& NamePlayer_O, string& NamePlayer_X) { // Hỏi lượt đánh trước
+void AskTurn(bool& _TURN, bool sound[], string& NamePlayer_O, string& NamePlayer_X, bool& pvp) { // Hỏi lượt đánh trước
 	SetConsoleBlank();
 	DrawBoxMini(72, 20, 24, 8, BLACK);//vẽ khung to
 	// Vẽ hai ô hiển thị O vs X
@@ -346,7 +346,7 @@ void AskTurn(bool& _TURN, bool sound[], string& NamePlayer_O, string& NamePlayer
 	cout << (unsigned char)16;
 	TextColor(RED);
 	bool check = true;
-	while (true) {
+	if (pvp) while (true) {
 		char press = toupper(_getch());
 		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
 		if (press == 'D' || press == 'A') {
@@ -445,7 +445,7 @@ void DrawEnterName(int x, int y, int color) {
 	SetConsoleOutputCP(437);
 }
 
-void EnterNamePlayer(string& NamePlayer_O, string& NamePlayer_X) {
+void EnterNamePlayer(string& NamePlayer_O, string& NamePlayer_X, bool& pvp) {
 	unsigned char x = 16;
 	SetConsoleBlank();
 	HideCursor(0);
@@ -461,6 +461,11 @@ void EnterNamePlayer(string& NamePlayer_O, string& NamePlayer_X) {
 	GotoXY(48, 15); cout << x << ' ';
 	NamePlayer_O = NamePlayer_X = "";
 	EnterName(NamePlayer_O, 14);
+	if (!pvp) {
+		NamePlayer_X = "BOT";
+		HideCursor(1);
+		return;
+	}
 	DrawBoxMini(49, 3, 35, 19, CYAN);
 	TextColor(BLUE);
 	GotoXY(51, 18); cout << " Player 2's Name ";
@@ -571,7 +576,7 @@ void DrawSaveFilesPage(const vector <_BUTTON>& v, int curPage, int filesPerPage)
 	}
 }
 
-void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5]) {
+void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5]) {
 	// Open the file that contains all the name of the saved games.
 	fstream inp;
 	inp.open("save/all_save.txt", ios::in);
@@ -657,9 +662,9 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool so
 			DrawSaveFilesPage(v, curPage, filesPerPage);
 		}
 		else if (_COMMAND == ENTER) {
-			LoadData(_A, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
+			LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
 			LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
-			StartGame(_A, 0, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
+			StartGame(_A, 0, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 			return;
 		}
 		
@@ -701,7 +706,7 @@ void DrawSaveFilesPageInPauseMenu(const vector <_BUTTON>& v, int curPage, int fi
 	}
 }
 
-bool LoadGameInPauseMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, float& lastPressed, WinningPos WP[5]) {
+bool LoadGameInPauseMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool &pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, float& lastPressed, WinningPos WP[5]) {
 	// Open the file that contains all the name of the saved games.
 	fstream inp;
 	inp.open("save/all_save.txt", ios::in);
@@ -777,9 +782,9 @@ bool LoadGameInPauseMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, 
 			DrawSaveFilesPageInPauseMenu(v, curPage, filesPerPage);
 		}
 		else if (_COMMAND == ENTER) {
-			LoadData(_A, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
+			LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
 			LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
-			StartGame(_A, 0, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
+			StartGame(_A, 0, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 			return 1;
 		}
 
@@ -852,7 +857,7 @@ void MainScreen() {
 	DrawButton();
 }
 
-void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5])
+void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5])
 {
 	Sleep(50);
 	SetConsoleBlank();
@@ -1000,16 +1005,17 @@ void MainMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[
 		{
 			if (y == 7)
 			{
-				EnterNamePlayer(NamePlayer_O, NamePlayer_X);
-				AskTurn(_TURN, sound, NamePlayer_O, NamePlayer_X);
+				pvp = ChooseMode(sound);
+				EnterNamePlayer(NamePlayer_O, NamePlayer_X, pvp);
+				AskTurn(_TURN, sound, NamePlayer_O, NamePlayer_X, pvp);
 				cntWinO = cntLoseO = cntDraw = 0;
 				cntRound = 1;
-				StartGame(_A, 1, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
+				StartGame(_A, 1, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 				return;
 			}
 			if (y == 10)
 			{
-				LoadGameMenu(_A, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
+				LoadGameMenu(_A, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 				return;
 			}
 			if (y == 13)
@@ -1328,7 +1334,7 @@ void DrawTimer(float time, bool _TURN) {
 		DrawNumber(80 + i * 10 - (i == 1 && (num[0] == 1 || num[1] == 9)), 20, num[i], (num[0] == 0 && num[1] <= 5 ? RED : YELLOW));
 }
 
-bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, float& lastPressed, WinningPos WP[5]) {
+bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, float& lastPressed, WinningPos WP[5]) {
 	remain += lastPressed - clock();
 	ClearBox(49, 15, 64, 3);
 	TextColor(BLACK);
@@ -1391,7 +1397,7 @@ bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound
 				break;
 			if (cur == 1) {
 				UnhoverButton(button[cur], BLACK);
-				bool ok = LoadGameInPauseMenu(_A, _TURN, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, lastPressed, WP);
+				bool ok = LoadGameInPauseMenu(_A, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, lastPressed, WP);
 				if (ok)
 					return 1;
 				ClearBox(34, 15, 79, 3);
@@ -1410,7 +1416,7 @@ bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& _COMMAND, bool sound
 				bool ok = EnterName(fileName, 20);
 				if (ok) {
 					fileName += ".txt";
-					SaveData(_A, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
+					SaveData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
 					GotoXY(87, 13);
 					cout << "SAVED SUCCESSFULLY!";
 				}
@@ -2667,6 +2673,43 @@ void Draw(int x, int y, string nameFile, int color) {
 	}
 	Read.close();
 	SetConsoleOutputCP(437);
+}
+
+bool ChooseMode(bool sound[]) {
+	SetConsoleBlank();
+	BackGround();
+	DrawAsciiFile(0, 3, "ChooseMode", BLACK);
+
+	DrawBoxMini(30, 9, 70, 14, GRAY);
+	DrawAsciiFile(0, 15, "pvc", GRAY);
+
+	DrawBoxMini(30, 9, 29, 14, RED);
+	DrawAsciiFile(0, 15, "pvp", RED);
+	bool cur = 0;
+	while (true) {
+		char c = toupper(_getch());
+		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+		if (c == ENTER) {
+			return !cur;
+		}
+		if (c == A || c == D)
+			cur ^= 1;
+		if (cur == 0) {
+			DrawBoxMini(30, 9, 70, 14, GRAY);
+			DrawAsciiFile(0, 15, "pvc", GRAY);
+
+			DrawBoxMini(30, 9, 29, 14, RED);
+			DrawAsciiFile(0, 15, "pvp", RED);
+		}
+		else {
+			DrawBoxMini(30, 9, 70, 14, RED);
+			DrawAsciiFile(0, 15, "pvc", RED);
+
+			DrawBoxMini(30, 9, 29, 14, GRAY);
+			DrawAsciiFile(0, 15, "pvp", GRAY);
+		}
+	}
+	GotoXY(27, 27);
 }
 
 void ExitScreen()
