@@ -237,7 +237,7 @@ void FindMove(_POINT _A[B_SIZE][B_SIZE], int& _X, int& _Y, int& cX, int& cY) {
 	}
 }
 
-void StartGame(_POINT _A[B_SIZE][B_SIZE], bool reset, bool& _TURN, bool& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5]) {
+void StartGame(_POINT _A[B_SIZE][B_SIZE], bool reset, bool& _TURN, int& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5]) {
 	SetupGame(_A, reset, _TURN, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, cntRound, NamePlayer_O, NamePlayer_X, remain);
 	bool validEnter = true, botTurn = !_TURN;
 	float lastPressed = clock();
@@ -356,7 +356,7 @@ void StartGame(_POINT _A[B_SIZE][B_SIZE], bool reset, bool& _TURN, bool& pvp, in
 	}
 }
 
-bool LoadData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool& pvp, int& _COMMAND, int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, string FileName, float& remain) {
+bool LoadData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAND, int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, string FileName, float& remain) {
 	fstream inp;
 	inp.open("save/data/" + FileName + ".txt", ios::in);
 	if (inp.fail()) {
@@ -378,7 +378,7 @@ bool LoadData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool& pvp, int& _COMMAND, 
 	return 1;
 }
 
-bool SaveData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, bool& pvp, int& _COMMAND, int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, string FileName, float& remain) {
+bool SaveData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAND, int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, string FileName, float& remain) {
 	fstream out;
 	out.open("save/data/" + FileName + ".txt", ios::out);
 	if (out.fail()) {

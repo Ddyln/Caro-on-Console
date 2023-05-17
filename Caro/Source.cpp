@@ -1,5 +1,4 @@
-﻿
-#include "Data.h"
+﻿#include "Data.h"
 #include "Control.h"
 #include "View.h"
 #include "Model.h"
@@ -12,7 +11,7 @@ int _X, _Y, cX, cY; //Tọa độ hiện hành trên màn hình bàn cờ
 int cntX, cntO, saveTurn = 0, cntWinO = 0, cntLoseO = 0, cntDraw = 0, cntRound = 1;
 float remain;
 bool sound[] = { 1, 1 };
-bool pvp = 1;
+int pvp = 1;
 string NamePlayer_O = "", NamePlayer_X = "";
 WinningPos WP[5];
 
