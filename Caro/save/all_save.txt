@@ -1,2 +1,11 @@
 draw
 test pvc 1
+pvp cang cuc
+test delete - Copy
+test delete - Copy (2)
+test delete - Copy (5)
+test delete - Copy (6)
+test delete - Copy (7)
+test delete - Copy (8)
+test delete - Copy (10)
+pvc2

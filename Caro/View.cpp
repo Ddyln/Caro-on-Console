@@ -560,7 +560,7 @@ void HideCursor(bool ok) {
 
 void DrawSaveFilesPage(const vector <_BUTTON>& v, int curPage, int filesPerPage) {
 	TextColor(YELLOW);
-	GotoXY(WIDTH / 2 - 5, HEIGHT / 2 + 8);
+	GotoXY(WIDTH / 2 - 25, HEIGHT / 2 + 8);
 	cout << "< ";
 	if (curPage <= filesPerPage)
 		cout << "0";
@@ -579,6 +579,90 @@ void DrawSaveFilesPage(const vector <_BUTTON>& v, int curPage, int filesPerPage)
 			GotoXY(v[i].x, v[i].y);
 			Sleep(50);
 			cout << v[i].data;
+		}
+	}
+}
+
+void DrawInfoFile(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5], string fileName) {
+	LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
+	int x = WIDTH / 2 + 15, y = HEIGHT / 2 - 11, w = 32, h = 9;
+	TextColor(BLACK);
+	GotoXY(x + 2, y + 2);
+	TextColor(BLUE);
+	for (int i = 2; i < w - 1; i++)
+		cout << H_LINE;
+	GotoXY(x + w / 2 - 4, y + 1);
+	TextColor(BLACK);
+	cout << "MODE: ";
+	TextColor(YELLOW);
+	cout << (pvp ? "PvP" : "PvC");
+	GotoXY(x + 2, y + 3);
+	TextColor(BLACK);
+	cout << "Player O: ";
+	TextColor(BLUE);
+	cout<< NamePlayer_O;
+	GotoXY(x + 2, y + 5);
+	TextColor(BLACK);
+	cout << "Player X: ";
+	TextColor(RED);
+	cout << NamePlayer_X;
+	GotoXY(x + 2, y + 7);
+	TextColor(BLACK);
+	cout << "Round   : ";
+	TextColor(GREEN);
+	cout << cntRound;
+	GotoXY(x + w / 2 + 2, y + 7);
+	TextColor(BLACK);
+	cout << "Score: ";
+	TextColor(BLUE);
+	cout << cntWinO;
+	TextColor(BLACK);
+	cout << " / ";
+	TextColor(RED);
+	cout << cntRound - cntDraw - cntWinO - 1;
+	GotoXY(x + 2, y + h - 2);
+	TextColor(BLUE);
+}
+
+int ChooseOptionLM(bool sound[]) {
+	int x1 = WIDTH / 2 + 18, x2 = x1 + 16, y = HEIGHT / 2, w = 10, h = 3;
+	DrawBoxMini(w, h, x2, y, BLACK);
+	GotoXY(x2 + 2, y + 1);
+	TextColor(BLACK);
+	cout << "DELETE";
+	DrawBoxMini(w, h, x1, y, RED);
+	GotoXY(x1 + 3, y + 1);
+	TextColor(RED);
+	cout << "LOAD";
+	int cur = 0;
+	while (true) {
+		char c = toupper(_getch());
+		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+		if (c == A || c == D)
+			cur ^= 1;
+		if (c == ESC)
+			return -1;
+		if (c == ENTER)
+			return cur;
+		if (cur) {
+			DrawBoxMini(w, h, x2, y, RED);
+			GotoXY(x2 + 2, y + 1);
+			TextColor(RED);
+			cout << "DELETE";
+			DrawBoxMini(w, h, x1, y, BLACK);
+			GotoXY(x1 + 3, y + 1);
+			TextColor(BLACK);
+			cout << "LOAD";
+		}
+		else {
+			DrawBoxMini(w, h, x2, y, BLACK);
+			GotoXY(x2 + 2, y + 1);
+			TextColor(BLACK);
+			cout << "DELETE";
+			DrawBoxMini(w, h, x1, y, RED);
+			GotoXY(x1 + 3, y + 1);
+			TextColor(RED);
+			cout << "LOAD";
 		}
 	}
 }
@@ -623,7 +707,6 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 		}
 	}
 	for (int i = 0, cnt = 1; i < v.size(); i++, cnt = cnt % filesPerPage + 1) {
-		//GotoXY(BOX_X + 1, BOX_Y + 2 * cnt - 1);
 		v[i].x = BOX_X + 1;
 		v[i].y = BOX_Y + 2 * cnt - 1;
 		int x = (BOX_W - 2 - v[i].data.size()) / 2;
@@ -631,14 +714,15 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 			v[i].data += " ";
 		while (x--)
 			v[i].data = " " + v[i].data, v[i].data += " ";
-		//v[i].data += " ";
 	}
 	int nFiles = v.size();
 	int nPages = ceil(1.0 * nFiles / filesPerPage);
 	DrawSaveFilesPage(v, 1, filesPerPage);
 	int curFile = 0, prvFile = -1, curPage = 1, lastFile = 0;
 	HoverButton(v[curFile]);
+	DrawBoxMini(32, 9, WIDTH / 2 + 15, HEIGHT / 2 - 11, BLUE);
 	while (true) {
+		DrawInfoFile(_A, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data));
 		int _COMMAND = toupper(_getch());
 		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
 		lastFile = (curPage == nPages ? (nFiles - 1) % filesPerPage : filesPerPage - 1);
@@ -669,7 +753,35 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 			DrawSaveFilesPage(v, curPage, filesPerPage);
 		}
 		else if (_COMMAND == ENTER) {
-			LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
+			int option = ChooseOptionLM(sound);
+			if (option < 0) {
+				int x1 = WIDTH / 2 + 18, x2 = x1 + 16, y = HEIGHT / 2, w = 10, h = 3;
+				ClearBox(w, h, x2, y);
+				ClearBox(w, h, x1, y);
+				continue;
+			}
+			else if (option) {
+				string delCommand = "del save\\data\\";
+				delCommand += '"' + CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data) + ".txt" + '"';
+				system(delCommand.c_str());
+				for (int i = (curPage - 1) * filesPerPage + curFile; i < nFiles - 1; i++)
+					v[i].data = v[i + 1].data;
+				v.pop_back();
+				fstream out;
+				out.open("save/all_save.txt", ios::out);
+				for (int i = 0; i < v.size(); i++) {
+					if (i)
+						out << endl;
+					out << CleanFileName(v[i].data);
+				}
+				out.close();
+				nFiles--;
+				curFile = 0, prvFile = -1, lastFile = 0, curPage = 1, nPages = ceil(1.0 * nFiles / filesPerPage);
+				DrawSaveFilesPage(v, curPage, filesPerPage);
+				HoverButton(v[curFile + filesPerPage * (curPage - 1)]);
+				continue;
+			}
+			//LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
 			LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 			StartGame(_A, 0, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 			return;
@@ -1427,7 +1539,6 @@ bool PauseGame(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAND, 
 				HideCursor(0);
 				bool ok = EnterName(fileName, 20);
 				if (ok) {
-					fileName += ".txt";
 					SaveData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
 					GotoXY(87, 13);
 					cout << "SAVED SUCCESSFULLY!";
@@ -1632,8 +1743,7 @@ void HoverButton(_BUTTON a) {
 	cout << a.data;
 }
 
-void ascii_art(string input, int x, int y, int t_color)
-{
+void ascii_art(string input, int x, int y, int t_color) {
 	//	set_console_size();
 	TextColor(t_color);
 	//first layer
@@ -2692,10 +2802,10 @@ int ChooseMode(bool sound[]) {
 	BackGround();
 	DrawAsciiFile(0, 3, "ChooseMode", BLACK);
 
-	DrawBoxMini(30, 9, 70, 14, GRAY);
+	DrawBoxMini(34, 9, 68, 14, GRAY);
 	DrawAsciiFile(0, 15, "pvc", GRAY);
 
-	DrawBoxMini(30, 9, 29, 14, RED);
+	DrawBoxMini(34, 9, 19, 14, RED);
 	DrawAsciiFile(0, 15, "pvp", RED);
 	bool cur = 0;
 	while (true) {
@@ -2709,17 +2819,17 @@ int ChooseMode(bool sound[]) {
 		if (c == A || c == D)
 			cur ^= 1;
 		if (cur == 0) {
-			DrawBoxMini(30, 9, 70, 14, GRAY);
+			DrawBoxMini(34, 9, 68, 14, GRAY);
 			DrawAsciiFile(0, 15, "pvc", GRAY);
 
-			DrawBoxMini(30, 9, 29, 14, RED);
+			DrawBoxMini(34, 9, 19, 14, RED);
 			DrawAsciiFile(0, 15, "pvp", RED);
 		}
 		else {
-			DrawBoxMini(30, 9, 70, 14, RED);
+			DrawBoxMini(34, 9, 68, 14, RED);
 			DrawAsciiFile(0, 15, "pvc", RED);
 
-			DrawBoxMini(30, 9, 29, 14, GRAY);
+			DrawBoxMini(34, 9, 19, 14, GRAY);
 			DrawAsciiFile(0, 15, "pvp", GRAY);
 		}
 	}
