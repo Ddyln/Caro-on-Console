@@ -795,6 +795,9 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 				out.close();
 				nFiles--;
 				curFile = 0, prvFile = -1, lastFile = 0, curPage = 1, nPages = ceil(1.0 * nFiles / filesPerPage);
+				int x1 = WIDTH / 2 + 18, x2 = x1 + 16, y = HEIGHT / 2, w = 10, h = 3;
+				ClearBox(w, h, x2, y);
+				ClearBox(w, h, x1, y);
 				if (v.size()) {
 					DrawSaveFilesPage(v, curPage, filesPerPage);
 					HoverButton(v[curFile + filesPerPage * (curPage - 1)]);
@@ -802,7 +805,7 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 				continue;
 			}
 			//LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
-			LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
+			//LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 			StartGame(_A, 0, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 			return;
 		}
@@ -922,7 +925,7 @@ bool LoadGameInPauseMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& 
 		}
 		else if (_COMMAND == ENTER) {
 			LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
-			LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
+			//LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 			StartGame(_A, 0, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 			return 1;
 		}

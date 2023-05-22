@@ -399,8 +399,10 @@ bool SaveData(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAND, i
 	bool ok = 0;
 	fstream inp;
 	inp.open("save/all_save.txt", ios::in);
-	while (inp >> s) 
+	while (inp.good()) {
+		getline(inp, s);
 		ok |= (s == FileName);
+	}
 	if (!ok)
 		out << endl << FileName;
 	out.close();

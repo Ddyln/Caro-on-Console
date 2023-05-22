@@ -20,7 +20,7 @@ int main() {
 	FixConsoleWindow();
 	changeFont(23);
 	LoadSound(sound);
-	LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
+//	LoadingScreen(BLUE, GREEN, LIGHT_CYAN);
 	while (true) {
 		MainMenu(_A, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP);
 	}
