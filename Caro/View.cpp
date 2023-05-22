@@ -586,6 +586,7 @@ void DrawSaveFilesPage(const vector <_BUTTON>& v, int curPage, int filesPerPage)
 void DrawInfoFile(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAND, bool sound[], int& _X, int& _Y, int& cX, int& cY, int& cntX, int& cntO, int& cntWinO, int& cntLoseO, int& cntDraw, int& saveTurn, int& cntRound, string& NamePlayer_O, string& NamePlayer_X, float& remain, WinningPos WP[5], string fileName) {
 	LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, fileName, remain);
 	int x = WIDTH / 2 + 15, y = HEIGHT / 2 - 11, w = 32, h = 9;
+	ClearBox(w - 2, h - 2, x + 1, y + 1);
 	TextColor(BLACK);
 	GotoXY(x + 2, y + 2);
 	TextColor(BLUE);
@@ -696,8 +697,9 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 	GotoXY(47, 26);
 	TextColor(MAGENTA);
 	cout << " " << L_TRIANGLE << " PRESS ESC TO COMEBACK " << R_TRIANGLE << " ";
+	DrawBoxMini(32, 9, WIDTH / 2 + 15, HEIGHT / 2 - 11, BLUE);
 	if (v.size() == 1 && v[0].data == "") {
-		GotoXY(53, 11);
+		GotoXY(34, 11);
 		cout << "< EMPTY DATA >";
 		while (true) {
 			char c = toupper(_getch());
@@ -720,8 +722,24 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 	DrawSaveFilesPage(v, 1, filesPerPage);
 	int curFile = 0, prvFile = -1, curPage = 1, lastFile = 0;
 	HoverButton(v[curFile]);
-	DrawBoxMini(32, 9, WIDTH / 2 + 15, HEIGHT / 2 - 11, BLUE);
+	GotoXY(0, 0);
 	while (true) {
+		if (v.empty()) {
+			ClearBox(BOX_W - 2, BOX_H - 3, BOX_X + 1, BOX_Y + 1);
+			GotoXY(34, 11);
+			TextColor(MAGENTA);
+			cout << "< EMPTY DATA >";
+			int x1 = WIDTH / 2 + 18, x2 = x1 + 16, y = HEIGHT / 2, w = 10, h = 3;
+			ClearBox(w, h, x2, y);
+			ClearBox(w, h, x1, y);
+			ClearBox(30, 7, WIDTH / 2 + 16, HEIGHT / 2 - 10);
+			while (true) {
+				char c = toupper(_getch());
+				if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
+				if (c == ESC)
+					return;
+			}
+		}
 		DrawInfoFile(_A, _TURN, pvp, _COMMAND, sound, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, remain, WP, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data));
 		int _COMMAND = toupper(_getch());
 		if (sound[CLICK_SFX]) PlayAudio(CLICK_SFX);
@@ -777,8 +795,10 @@ void LoadGameMenu(_POINT _A[B_SIZE][B_SIZE], bool& _TURN, int& pvp, int& _COMMAN
 				out.close();
 				nFiles--;
 				curFile = 0, prvFile = -1, lastFile = 0, curPage = 1, nPages = ceil(1.0 * nFiles / filesPerPage);
-				DrawSaveFilesPage(v, curPage, filesPerPage);
-				HoverButton(v[curFile + filesPerPage * (curPage - 1)]);
+				if (v.size()) {
+					DrawSaveFilesPage(v, curPage, filesPerPage);
+					HoverButton(v[curFile + filesPerPage * (curPage - 1)]);
+				}
 				continue;
 			}
 			//LoadData(_A, _TURN, pvp, _COMMAND, _X, _Y, cX, cY, cntX, cntO, cntWinO, cntLoseO, cntDraw, saveTurn, cntRound, NamePlayer_O, NamePlayer_X, CleanFileName(v[(curPage - 1) * filesPerPage + curFile].data), remain);
